@@ -32,4 +32,27 @@ describe('DateRange Value Object', () => {
 
         expect(totalNights1).toBe(15);
     });
+
+    it('deve verificar se dois intervalos de datas se sobrepõem', () => {
+        const dateRange1 = new DateRange(
+            new Date("2024-12-20"),
+            new Date("2024-12-25")
+        );
+
+        const dateRange2 = new DateRange(
+            new Date("2024-12-22"),
+            new Date("2024-12-27")
+        );
+
+        const overlaps = dateRange1.overlaps(dateRange2);
+
+        expect(overlaps).toBe(true);
+    });
+
+    it('deve lançar erro se a data de ínicio e término forem iguais', () => {
+        const date = new Date('2024-12-20');
+        expect(() => {
+            new DateRange(date, date);
+        }).toThrow("A data de ínicio e término não podem ser iguais.");
+    });
 });
