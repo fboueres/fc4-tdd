@@ -22,6 +22,8 @@ export class Booking {
         this.guest = guest;
         this.dateRange = dateRange;
         this.guestCount = guestCount;
+
+        property.addBooking(this);
     }
 
     getId(): string {
