@@ -47,7 +47,7 @@ export class Property {
     
     validateGuestCount(guestCount: number): void {
         if (guestCount > this.maxGuests) {
-            throw new Error(`Número de máximo de hóspedes excedido. Máximo permitido é: ${this.maxGuests}.`);
+            throw new Error(`Número máximo de hóspedes excedido. Máximo permitido é: ${this.maxGuests}.`);
         }
     };
 
