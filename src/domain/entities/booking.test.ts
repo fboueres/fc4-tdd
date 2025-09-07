@@ -46,4 +46,17 @@ describe("Booking Entity", () => {
             new Booking('1', property, user, dateRange, 5);
         }).toThrow("Número máximo de hóspedes excedido. Máximo permitido é: 4.");
     });
+
+    it('deve calcular o preço total com desconto', () => {
+        const property = new Property('1', 'Casa', 'Descrição', 4, 300);
+        const user = new User('1', 'João Silva');
+        const dateRange = new DateRange(
+            new Date('2024-12-01'),
+            new Date('2024-12-10')
+        );
+
+        const booking = new Booking("1", property, user, dateRange, 4);
+
+        expect(booking.getTotalPrice()).toBe(300 * 9 * 0.9);
+    });
 });
