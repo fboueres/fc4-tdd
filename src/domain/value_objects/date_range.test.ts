@@ -34,19 +34,31 @@ describe('DateRange Value Object', () => {
     });
 
     it('deve verificar se dois intervalos de datas se sobrepõem', () => {
-        const dateRange1 = new DateRange(
+        const dateRangeOverlaping1 = new DateRange(
             new Date("2024-12-20"),
             new Date("2024-12-25")
         );
-
-        const dateRange2 = new DateRange(
+        const dateRangeOverlaping2 = new DateRange(
             new Date("2024-12-22"),
             new Date("2024-12-27")
         );
 
-        const overlaps = dateRange1.overlaps(dateRange2);
+        const overlaps = dateRangeOverlaping1.overlaps(dateRangeOverlaping2);
 
         expect(overlaps).toBe(true);
+
+        const dateRangeNonOverlaping1 = new DateRange(
+            new Date("2024-11-01"),
+            new Date("2024-11-07")
+        );
+        const dateRangeNonOverlaping2 = new DateRange(
+            new Date("2024-12-01"),
+            new Date("2024-12-07")
+        );
+
+        const overlaps1 = dateRangeNonOverlaping1.overlaps(dateRangeNonOverlaping2);
+
+        expect(overlaps1).toBe(false);
     });
 
     it('deve lançar erro se a data de ínicio e término forem iguais', () => {

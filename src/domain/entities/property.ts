@@ -11,13 +11,26 @@ export class Property {
         private maxGuests: number,
         private basePricePerNight: number
     ) {
+        if (!id) {
+            throw new Error ('O ID é obrigatório.')
+        }
+        
         if (!name) {
             throw new Error("O nome é obrigatório.");
         }
 
+        if(!description) {
+            throw new Error('A descrição é obrigatória.');
+        }
+        
         if(maxGuests <= 0) {
             throw new Error("O número máximo de hóspedes deve ser maior que zero.");
         }
+
+        if (basePricePerNight <= 0) {
+            throw new Error('O preço base por noite deve ser maior que zero.');
+        };
+
         this.id = id;
         this.name = name;
         this.description = description;
@@ -63,10 +76,11 @@ export class Property {
     };
 
     isAvailable(dateRange: DateRange): boolean {
-        return !this.bookings.some((booking) => {
-            booking.getStatus() == 'CONFIRMED' &&
-            booking.getDateRange().overlaps(dateRange);
-        });
+        return !this.bookings.some(
+            (booking) => 
+                booking.getStatus() === 'CONFIRMED' &&
+                booking.getDateRange().overlaps(dateRange)
+        );
     }
 
     addBooking(booking: Booking): void {
