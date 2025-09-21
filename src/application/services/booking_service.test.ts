@@ -34,7 +34,22 @@ describe("BookingService", () => {
         );
     });
     
-    it("deve criar uma reserva com sucesso usando repositório fake", () => {
+    it("deve criar uma reserva com sucesso usando repositório fake", async () => {
+        const mockProperty = {
+            getId: jest.fn().mockReturnValue("1"),
+            isAvailable: jest.fn().mockReturnValue(true),
+            validateGuesCount: jest.fn(),
+            calculateTotalPrice: jest.fn().mockReturnValue(500),
+            addBooking: jest.fn()
+        } as any;
+        
+        const mockUser = {
+            getId: jest.fn().mockReturnValue("1"),
+        } as any;
+        
+        mockPropertyService.findPropertyById.mockResolvedValue(mockProperty);
+        mockUserService.findUserById.mockResolvedValue(mockUser);
+        
         const bookingDTO: CreateBookingDTO = {
             propertyId: "1",
             guestId: "1",
