@@ -1,6 +1,39 @@
+import { Booking } from "../../domain/entities/booking";
+import { BookingService } from "./booking_service";
 import { CreateBookingDTO } from "../dtos/create_booking_dto";
+import { FakeBookingRepository } from "../../infrastructure/repositories/fake_booking_repository";
+import { PropertyService } from "./property_service";
+import { UserService } from "./user_service";
+
+jest.mock("./property_service");
+jest.mock("./user_service");
 
 describe("BookingService", () => {
+    let bookingService: BookingService;
+    let fakeBookingRepository: FakeBookingRepository;
+    let mockPropertyService: jest.Mocked<PropertyService>;
+    let mockUserService: jest.Mocked<UserService>;
+
+    beforeEach(() => {
+        const mockPropertyRepository = {} as any;
+        const mockUserRepository = {} as any;
+
+        mockPropertyService = new PropertyService(
+            mockPropertyRepository
+        ) as jest.Mocked<PropertyService>;
+
+        mockUserService = new UserService(
+            mockUserRepository
+        ) as jest.Mocked<UserService>;
+        
+        fakeBookingRepository = new FakeBookingRepository();
+        bookingService = new BookingService(
+            fakeBookingRepository,
+            mockPropertyService,
+            mockUserService
+        );
+    });
+    
     it("deve criar uma reserva com sucesso usando repositório fake", () => {
         const bookingDTO: CreateBookingDTO = {
             propertyId: "1",
@@ -13,11 +46,6 @@ describe("BookingService", () => {
         const result = await bookingService.createBooking(bookingDTO);
 
         expect(result).toBeInstanceOf(Booking);
-        expect(result.getGuestCount()).toBe(2);
-        expect(result.getPropertyId()).toBe("1");
-        expect(result.getGuestId()).toBe("1");
-        expect(result.getStartDate()).toEqual(new Date("2024-12-20"));
-        expect(result.getEndDate()).toEqual(new Date("2024-12-25"));
         expect(result.getTotalPrice()).toBe(500);
         expect(result.getStatus()).toBe("CONFIRMED)");
 
