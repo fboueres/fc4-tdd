@@ -1,4 +1,4 @@
-import type { User } from "../entities/user";
+import { User } from "../entities/user";
 
 export interface UserRepository {
     save(User: User): Promise<void>;

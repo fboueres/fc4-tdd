@@ -1,5 +1,5 @@
 import { Property } from "../../domain/entities/property";
-import type { PropertyRepository } from "../../domain/repositories/property_repository";
+import { PropertyRepository } from "../../domain/repositories/property_repository";
 
 export class FakePropertyRepository implements PropertyRepository {
     private properties: Property[] = [

@@ -1,5 +1,5 @@
-import { Property } from "../domain/entities/property";
-import { FakePropertyRepository } from "../infrastructure/repositories/fake_property_repository";
+import { Property } from "../../domain/entities/property"
+import { FakePropertyRepository } from "../../infrastructure/repositories/fake_property_repository";
 import { PropertyService } from "./property_service";
 
 describe("PropertyService", () => {

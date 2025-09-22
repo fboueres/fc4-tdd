@@ -1,9 +1,9 @@
 import { FullRefund } from "../cancelation/full_refund";
 import { PartialRefund } from "../cancelation/partial_refund";
 import { RefundRuleFactory } from "../cancelation/refund_rule_factory";
-import type { DateRange } from "../value_objects/date_range";
-import type { Property } from "./property";
-import type { User } from "./user";
+import { DateRange } from "../value_objects/date_range";
+import { Property } from "./property";
+import { User } from "./user";
 
 export class Booking {
     private readonly id: string;

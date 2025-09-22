@@ -1,4 +1,4 @@
-import type { Property } from "../entities/property";
+import { Property } from "../entities/property";
 
 export interface PropertyRepository {
     save(property: Property): Promise<void>;

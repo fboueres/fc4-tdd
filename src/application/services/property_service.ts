@@ -1,5 +1,5 @@
-import type { Property } from "../domain/entities/property";
-import type { PropertyRepository } from "../domain/repositories/property_repository";
+import { Property } from "../../domain/entities/property";
+import { PropertyRepository } from "../../domain/repositories/property_repository";
 
 export class PropertyService {
     constructor(

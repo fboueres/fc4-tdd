@@ -1,7 +1,7 @@
 import { FullRefund } from "./full_refund";
 import { NoRefund } from "./no_refund";
 import { PartialRefund } from "./partial_refund";
-import type { RefundRule } from "./refund_rule.interface";
+import { RefundRule } from "./refund_rule.interface";
 
 export class RefundRuleFactory {
     static getRefundRule(daysUntilCheckIn: number): RefundRule {

@@ -25,7 +25,7 @@ describe("BookingService", () => {
         mockUserService = new UserService(
             mockUserRepository
         ) as jest.Mocked<UserService>;
-        
+
         fakeBookingRepository = new FakeBookingRepository();
         bookingService = new BookingService(
             fakeBookingRepository,
@@ -38,7 +38,7 @@ describe("BookingService", () => {
         const mockProperty = {
             getId: jest.fn().mockReturnValue("1"),
             isAvailable: jest.fn().mockReturnValue(true),
-            validateGuesCount: jest.fn(),
+            validateGuestCount: jest.fn(),
             calculateTotalPrice: jest.fn().mockReturnValue(500),
             addBooking: jest.fn()
         } as any;
@@ -46,6 +46,13 @@ describe("BookingService", () => {
         const mockUser = {
             getId: jest.fn().mockReturnValue("1"),
         } as any;
+
+        const mockDateRange = {
+            getStartDate: jest.fn().mockReturnValue(new Date("2024-12-20")),
+            getEndDate: jest.fn().mockReturnValue(new Date("2024-12-25")),
+            getTotalNights: jest.fn().mockReturnValue(6),
+            overlaps: jest.fn()
+        }
         
         mockPropertyService.findPropertyById.mockResolvedValue(mockProperty);
         mockUserService.findUserById.mockResolvedValue(mockUser);
@@ -53,8 +60,8 @@ describe("BookingService", () => {
         const bookingDTO: CreateBookingDTO = {
             propertyId: "1",
             guestId: "1",
-            startDate: new Date("2024-12-20"),
-            endDate: new Date("2024-12-25"),
+            startDate: mockDateRange.getStartDate(),
+            endDate: mockDateRange.getEndDate(),
             guestCount: 2
         };
 
@@ -62,7 +69,7 @@ describe("BookingService", () => {
 
         expect(result).toBeInstanceOf(Booking);
         expect(result.getTotalPrice()).toBe(500);
-        expect(result.getStatus()).toBe("CONFIRMED)");
+        expect(result.getStatus()).toBe("CONFIRMED");
 
         const savedBooking = await fakeBookingRepository.findById(result.getId());
         
