@@ -125,4 +125,40 @@ describe("BookingService", () => {
             "Usuário não encontrado."
         );
     });
+
+    it("deve lançar um erro ao tentar criar uma reserva para um período já reservado", async () => {
+        const mockProperty = {
+            calculateTotalPrice: jest.fn().mockReturnValue(500),
+            addBooking: jest.fn(),
+            validateGuestCount: jest.fn(),
+            isAvailable: jest.fn().mockReturnValue(false)
+        } as any;
+        
+        const mockUser = {
+            getId: jest.fn().mockReturnValue("1"),
+        } as any;
+
+        const mockDateRange = {
+            getStartDate: jest.fn().mockReturnValue(new Date("2024-12-20")),
+            getEndDate: jest.fn().mockReturnValue(new Date("2024-12-25")),
+            getTotalNights: jest.fn().mockReturnValue(6),
+        }
+        
+        mockPropertyService.findPropertyById.mockResolvedValue(mockProperty);
+        mockUserService.findUserById.mockResolvedValue(mockUser);
+        
+        const bookingDTO: CreateBookingDTO = {
+            propertyId: "1",
+            guestId: "1",
+            startDate: mockDateRange.getStartDate(),
+            endDate: mockDateRange.getEndDate(),
+            guestCount: 2
+        };
+
+        mockProperty.isAvailable.mockReturnValue(false);
+
+        await expect(bookingService.createBooking(bookingDTO)).rejects.toThrow(
+            "A propriedade não está disponível para o período selecionado."
+        );
+    });
 });
