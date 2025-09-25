@@ -76,4 +76,53 @@ describe("BookingService", () => {
         expect(savedBooking).not.toBeNull();
         expect(savedBooking?.getId()).toBe(result.getId());
     });
+
+    it("deve lançar um erro quando a propriedade não for encontrada", async () => {
+        mockPropertyService.findPropertyById.mockResolvedValue(null);
+        
+        const mockDateRange = {
+            getStartDate: jest.fn().mockReturnValue(new Date("2024-12-20")),
+            getEndDate: jest.fn().mockReturnValue(new Date("2024-12-25")),
+            getTotalNights: jest.fn().mockReturnValue(6),
+            overlaps: jest.fn()
+        }
+        const bookingDTO: CreateBookingDTO = {
+            propertyId: "1",
+            guestId: "1",
+            startDate: mockDateRange.getStartDate(),
+            endDate: mockDateRange.getEndDate(),
+            guestCount: 2
+        };
+
+        await expect(bookingService.createBooking(bookingDTO)).rejects.toThrow(
+            "Propriedade não encontrada."
+        );
+    });
+
+    it("deve lançar um erro quando o usuário não for encontrada", async () => {
+        const mockProperty = {
+            getId: jest.fn().mockReturnValue("1"),
+        } as any;
+        
+        mockPropertyService.findPropertyById.mockResolvedValue(mockProperty);
+        mockUserService.findUserById.mockResolvedValue(null);
+        
+        const mockDateRange = {
+            getStartDate: jest.fn().mockReturnValue(new Date("2024-12-20")),
+            getEndDate: jest.fn().mockReturnValue(new Date("2024-12-25")),
+            getTotalNights: jest.fn().mockReturnValue(6),
+            overlaps: jest.fn()
+        }
+        const bookingDTO: CreateBookingDTO = {
+            propertyId: "1",
+            guestId: "1",
+            startDate: mockDateRange.getStartDate(),
+            endDate: mockDateRange.getEndDate(),
+            guestCount: 2
+        };
+
+        await expect(bookingService.createBooking(bookingDTO)).rejects.toThrow(
+            "Usuário não encontrado."
+        );
+    });
 });
