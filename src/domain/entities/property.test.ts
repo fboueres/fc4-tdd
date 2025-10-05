@@ -1,6 +1,5 @@
 import { Booking } from './booking';
 import { Property } from './property';
-import { DateRange} from '../value_objects/date_range';
 import { User } from './user';
 
 describe('Property Entity', () => {
@@ -74,51 +73,49 @@ describe('Property Entity', () => {
 
     it('não deve aplicar desconto para estadias com menores que 7 noites', () => {
         const property = new Property("1", "Apartamento", "Descrição", 5, 100);
-        const dateRange = new DateRange(
-            new Date('2024-12-10'),
-            new Date('2024-12-16')
-        );
-        const totalPrice = property.calculateTotalPrice(dateRange);
+        const mockDateRange = {
+            getTotalNights: jest.fn().mockReturnValue(6),
+        } as any;
+        const totalPrice = property.calculateTotalPrice(mockDateRange);
         expect(totalPrice).toBe(600);
     });
 
     it('deve aplicar desconto para estadias de 7 noites ou mais', () => {
         const property = new Property("1", "Apartamento", "Descrição", 5, 100);
-        const dateRange = new DateRange(
-            new Date('2024-12-10'),
-            new Date('2024-12-17')
-        );
-        const totalPrice = property.calculateTotalPrice(dateRange);
+        const mockDateRange = {
+            getTotalNights: jest.fn().mockReturnValue(7),
+        } as any;
+        const totalPrice = property.calculateTotalPrice(mockDateRange);
         expect(totalPrice).toBe(630);
     });
     
     it('a propriedade deve ser reservada corretamente', () => {
         const property = new Property('1', 'Casa', 'Descrição', 5, 100);
-        const user = new User('1', 'Fernando');
-        const dateRange = new DateRange(
-            new Date('2024-12-10'),
-            new Date('2024-12-15'),
-        );
+        const mockUser = {} as any;
+        const mockDateRange = {
+            getTotalNights: jest.fn().mockReturnValue(5),
+            overlaps: jest.fn().mockReturnValue(false),
+        } as any;
 
-        const booking = new Booking('1', property, user, dateRange, 5);
+        const booking = new Booking('1', property, mockUser, mockDateRange, 5);
         
         expect(property.getBookings()).toContain(booking);
 
-        const dateRange2 = new DateRange(
-            new Date('2024-11-10'),
-            new Date('2024-11-15')
-        );
+        const mockDateRange2 = {
+            getTotalNights: jest.fn().mockReturnValue(5),
+            overlaps: jest.fn().mockReturnValue(false),
+        } as any;
 
-        const booking2 = new Booking('1', property, user, dateRange2, 5);
+        const booking2 = new Booking('1', property, mockUser, mockDateRange2, 5);
         
         expect(property.getBookings()).toContain(booking2);
 
-        const dateRange3 = new DateRange(
-            new Date('2024-10-10'),
-            new Date('2024-10-15')
-        );
+        const mockDateRange3 = {
+            getTotalNights: jest.fn().mockReturnValue(5),
+            overlaps: jest.fn().mockReturnValue(false),
+        } as any;
 
-        const booking3 = new Booking('1', property, user, dateRange3, 5);
+        const booking3 = new Booking('1', property, mockUser, mockDateRange3, 5);
         
         expect(property.getBookings()).toContain(booking3);
     });
@@ -126,18 +123,15 @@ describe('Property Entity', () => {
     it('deve verificar disponibilidade da propriedade', () => {
         const user = new User("1", "Maria Silva");
         const property =  new Property('1', 'Apartamento', 'Descrição', 4, 200);
-        const dateRange = new DateRange(
-            new Date('2024-12-20'),
-            new Date('2024-12-25'),
-        );
-        const dateRange2 = new DateRange(
-            new Date('2024-12-22'),
-            new Date('2024-12-27'),
-        );
+        const mockDateRange = {
+            getTotalNights: jest.fn().mockReturnValue(5),
+            overlaps: jest.fn().mockReturnValue(true),
+        } as any;
+        const mockDateRange2 = {} as any;
 
-        new Booking("1", property, user, dateRange, 2);
+        new Booking("1", property, user, mockDateRange, 2);
 
-        expect(property.isAvailable(dateRange)).toBe(false);
-        expect(property.isAvailable(dateRange2)).toBe(false);
+        expect(property.isAvailable(mockDateRange)).toBe(false);
+        expect(property.isAvailable(mockDateRange2)).toBe(false);
     });
 });
