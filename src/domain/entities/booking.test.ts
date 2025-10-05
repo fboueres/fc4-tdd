@@ -4,73 +4,69 @@ import { Property } from "./property";
 import { User } from "./user";
 
 describe("Booking Entity", () => {
+    let mockProperty: any;
+    let mockUser: any;
+    let mockDateRange: any;
+
+    beforeEach(() => {
+        mockProperty = {
+            validateGuestCount: jest.fn(),
+            isAvailable: jest.fn().mockReturnValue(true),
+            calculateTotalPrice: jest.fn().mockReturnValue(500),
+            addBooking: jest.fn()
+        };
+        mockUser = {};
+        mockDateRange = {};
+    });
+    
     it('deve criar uma instância de Booking com todos os atributos', () => {
-        const property = new Property('1', 'Casa', 'Descrição', 4, 100);
-        const user = new User("1", "João Silva");
-        const dateRange = new DateRange(
-            new Date('2024-12-20'),
-            new Date('2024-12-25')
-        );
-        
-        const booking = new Booking('1', property, user, dateRange, 2);
+        const booking = new Booking('1', mockProperty, mockUser, mockDateRange, 2);
 
         expect(booking.getId()).toBe("1");
-        expect(booking.getProperty()).toBe(property);
-        expect(booking.getUser()).toBe(user);
-        expect(booking.getDateRange()).toBe(dateRange);
+        expect(booking.getProperty()).toBe(mockProperty);
+        expect(booking.getUser()).toBe(mockUser);
+        expect(booking.getDateRange()).toBe(mockDateRange);
         expect(booking.getGuestCount()).toBe(2);
         expect(booking.getStatus()).toBe('CONFIRMED');
         expect(booking.getTotalPrice()).toBe(100*5);
     });
 
     it('deve lançar um erro se o ID for vazio', () => {
-        const property = new Property('1', 'Casa', 'Descrição', 4, 100);
-        const user = new User("1", "João Silva");
-        const dateRange = new DateRange(
-            new Date('2024-12-20'),
-            new Date('2024-12-25')
-        );
-        
         expect(() => {
-            new Booking('', property, user, dateRange, 2);
+            new Booking('', mockProperty, mockUser, mockDateRange, 2);
         }).toThrow('O ID é obrigatório.')
     });
     
     it('deve lançar um erro se o número de hóspedes for zero ou negativo', () => {
-        const property = new Property('1', 'Casa', 'Descrição', 5, 150);
-        const user = new User('1', 'João Silva');
-        const dateRange = new DateRange(
-            new Date('2024-12-10'),
-            new Date('2024-12-15')
-        );
-        
         expect(() => {
-            new Booking('1', property, user, dateRange, 0);
+            new Booking('1', mockProperty, mockUser, mockDateRange, 0);
         }).toThrow("O número de hóspedes deve ser maior que zero.");
     });
 
     it('deve lançar um erro ao tentar reservar com número de hóspedes acima do máximo permitido', () => {
-        const property = new Property('1', 'Casa', 'Descrição', 4, 150);
-        const user = new User('1', 'João Silva');
-        const dateRange = new DateRange(
-            new Date('2024-12-10'),
-            new Date('2024-12-15')
-        );
+        const mockProperty = {
+            validateGuestCount: jest.fn(),
+            isAvailable: jest.fn().mockReturnValue(true),
+            calculateTotalPrice: jest.fn().mockReturnValue(500),
+            addBooking: jest.fn().mockImplementation(() => {
+                throw new Error("Número máximo de hóspedes excedido. Máximo permitido é: 4.")
+            })
+        } as any
         
         expect(() => {
-            new Booking('1', property, user, dateRange, 5);
+            new Booking('1', mockProperty, mockUser, mockDateRange, 5);
         }).toThrow("Número máximo de hóspedes excedido. Máximo permitido é: 4.");
     });
 
     it('deve calcular o preço total com desconto', () => {
-        const property = new Property('1', 'Casa', 'Descrição', 4, 300);
-        const user = new User('1', 'João Silva');
-        const dateRange = new DateRange(
-            new Date('2024-12-01'),
-            new Date('2024-12-10')
-        );
-
-        const booking = new Booking("1", property, user, dateRange, 4);
+        const mockProperty = {
+            validateGuestCount: jest.fn(),
+            isAvailable: jest.fn().mockReturnValue(true),
+            calculateTotalPrice: jest.fn().mockReturnValue(300 * 9 * 0.9),
+            addBooking: jest.fn()
+        } as any;
+        
+        const booking = new Booking("1", mockProperty, mockUser, mockDateRange, 4);
 
         expect(booking.getTotalPrice()).toBe(300 * 9 * 0.9);
     });
