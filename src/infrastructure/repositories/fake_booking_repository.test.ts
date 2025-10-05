@@ -28,5 +28,10 @@ describe("FakeBookingRepository", () => {
 
         expect(savedBooking).not.toBeNull();
         expect(savedBooking).toBeInstanceOf(Booking);
+        expect(savedBooking?.getId()).toBe(booking.getId());
+        expect(savedBooking?.getProperty()).toBe(booking.getProperty());
+        expect(savedBooking?.getUser()).toBe(booking.getUser());
+        expect(savedBooking?.getDateRange()).toBe(booking.getDateRange());
+        expect(savedBooking?.getGuestCount()).toBe(booking.getGuestCount());
     });
 });
