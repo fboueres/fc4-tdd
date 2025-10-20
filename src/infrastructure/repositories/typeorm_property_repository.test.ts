@@ -46,4 +46,31 @@ describe("TypeORMPropertyRepository", () => {
         expect(savedProperty?.maxGuests).toBe(property.getMaxGuests());
         expect(savedProperty?.basePricePerNight).toBe(property.getBasePricePerNight());
     });
+
+    it('deve retornar uma propriedade com ID válido', async () => {
+        const property = new Property(
+            "1",
+            "Casa na Praia",
+            "Vista para o mar",
+            6,
+            200
+        );
+        await propertyRepository.save(property);
+
+        const savedProperty = await propertyRepository.findById(property.getId());
+        
+        expect(savedProperty).not.toBeNull();
+        expect(savedProperty).toBeInstanceOf(Property)
+        expect(savedProperty?.getId()).toBe(property.getId());
+        expect(savedProperty?.getName()).toBe(property.getName());
+        expect(savedProperty?.getDescription()).toBe(property.getDescription());
+        expect(savedProperty?.getMaxGuests()).toBe(property.getMaxGuests());
+        expect(savedProperty?.getBasePricePerNight()).toBe(property.getBasePricePerNight());
+    });
+
+    it('deve retornar null ao buscar uma propriedade inexistente', async () => {
+        const property = await propertyRepository.findById("999");
+
+        expect(property).toBeNull();
+    });
 });

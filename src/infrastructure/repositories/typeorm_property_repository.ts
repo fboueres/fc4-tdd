@@ -2,7 +2,7 @@ import type { Repository } from "typeorm";
 import type { PropertyRepository } from "../../domain/repositories/property_repository";
 import { PropertyMapper } from "../persistence/mappers/property_mapper";
 import type { PropertyEntity } from "../persistence/entities/property_entity";
-import type { Property } from "../../domain/entities/property";
+import { Property } from "../../domain/entities/property";
 
 export class TypeORMPropertyRepository implements PropertyRepository {
     private readonly repository: Repository<PropertyEntity>;
@@ -16,7 +16,9 @@ export class TypeORMPropertyRepository implements PropertyRepository {
         await this.repository.save(propertyEntity);
     }
 
-    findById(id: string): Promise<Property | null> {
-        throw new Error("Method not implemented.");
+    async findById(id: string): Promise<Property | null> {
+        const propertyEntity = await this.repository.findOne({where: {id: id}});
+
+        return propertyEntity ? PropertyMapper.toDomain(propertyEntity) : null;
     }
 }
