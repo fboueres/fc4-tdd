@@ -38,4 +38,20 @@ describe("TypeORMUserRepository", () => {
         expect(savedUser?.id).toBe(user.getId());
         expect(savedUser?.name).toBe(user.getName());
     });
+
+    it("deve retornar um usuário quando um ID válido for fornecido", async () => {
+        const user = new User("1", "John Doe");
+        await userRepository.save(user);
+
+        const savedUser = await userRepository.findById("1");
+        expect(savedUser).not.toBeNull();
+        expect(savedUser).toBeInstanceOf(User);
+        expect(savedUser?.getId()).toBe(user.getId());
+        expect(savedUser?.getName()).toBe(user.getName());
+    });
+
+    it("deve retornar null ao buscar um usuário inexistente", async () => {
+        const user = await userRepository.findById("999");
+        expect(user).toBeNull();
+    });
 });
