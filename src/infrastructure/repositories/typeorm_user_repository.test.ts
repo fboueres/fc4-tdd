@@ -1,9 +1,11 @@
 import { DataSource, Repository } from "typeorm";
+import { TypeORMUserRepository } from "./typeorm_user_repository";
 import { User } from "../../domain/entities/user";
+import { UserEntity } from "../persistence/entities/user_entity";
 
 describe("TypeORMUserRepository", () => {
     let dataSource: DataSource;
-    let userRepository: TypeORMUserRepository<User>;
+    let userRepository: TypeORMUserRepository;
     let repository: Repository<UserEntity>;
 
     beforeAll(async () => {
@@ -31,7 +33,7 @@ describe("TypeORMUserRepository", () => {
 
         await userRepository.save(user);
 
-        const savedUser = await userRepository.findOne({where: {id: "1"}});
+        const savedUser = await userRepository.findById("1");
         expect(savedUser).not.toBeNull();
         expect(savedUser).toBeInstanceOf(User);
         expect(savedUser?.getId()).toBe(user.getId());
