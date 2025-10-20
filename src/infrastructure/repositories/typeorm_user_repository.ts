@@ -1,6 +1,7 @@
+import type { Repository } from "typeorm";
 import type { User } from "../../domain/entities/user";
 import type { UserRepository } from "../../domain/repositories/user_repository";
-import type { UserEntity } from "../persistence/entities/user_entity";
+import { UserEntity } from "../persistence/entities/user_entity";
 
 export class TypeORMUserRepository implements UserRepository {
     private readonly repository: Repository<UserEntity>
@@ -9,11 +10,14 @@ export class TypeORMUserRepository implements UserRepository {
         this.repository = repository;
     }
 
-    save(user: User): Promise<void> {
-        throw new Error ("Method not implemented.");
+    async save(user: User): Promise<void> {
+        const entity = new UserEntity();
+        entity.id = user.getId();
+        entity.name = user.getName();
+        await this.repository.save(entity);
     }
 
-    findById(id: string): Promise<void> {
+    findById(id: string): Promise<User|null> {
         throw new Error ("Method not implemented.");
     }
 }

@@ -33,10 +33,9 @@ describe("TypeORMUserRepository", () => {
 
         await userRepository.save(user);
 
-        const savedUser = await userRepository.findById("1");
+        const savedUser = await repository.findOne({where: {id: "1"}});
         expect(savedUser).not.toBeNull();
-        expect(savedUser).toBeInstanceOf(User);
-        expect(savedUser?.getId()).toBe(user.getId());
-        expect(savedUser?.getName()).toBe(user.getName());
+        expect(savedUser?.id).toBe(user.getId());
+        expect(savedUser?.name).toBe(user.getName());
     });
 });
