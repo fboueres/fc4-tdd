@@ -81,4 +81,60 @@ describe("TypeORMBookingRepository", () => {
         expect(savedBooking?.getUser().getId()).toBe(booking.getUser().getId());
         expect(savedBooking?.getGuestCount()).toBe(booking.getGuestCount());
     });
+
+    it("deve retornar null ao buscar uma reserva inexistente", async () => {
+        const savedBooking = await bookingRepository.findById("999");
+        expect(savedBooking).toBeNull();
+    });
+
+    it("deve salvar uma reserva com sucesso - fazendo um cancelamento posterior", async () => {
+        const propertyRepository = dataSource.getRepository(PropertyEntity);
+        const userRepository = dataSource.getRepository(UserEntity);
+
+        const propertyEntity = propertyRepository.create({
+            id: "1",
+            name: "Casa na Praia",
+            description: "Vista para o mar",
+            maxGuests: 6,
+            basePricePerNight: 200
+        });
+        await propertyRepository.save(propertyEntity);
+
+        const userEntity = userRepository.create({
+            id: "1",
+            name: "Carlos"
+        });
+        await userRepository.save(userEntity);
+
+        const property = new Property(
+            "1",
+            "Casa na Praia",
+            "Vista para o mar",
+            6,
+            200
+        );
+        const user = new User("1", "Carlos");
+        const dateRange = new DateRange(
+            new Date('2024-12-20'), 
+            new Date('2024-12-25')
+        );
+
+        const booking = new Booking(
+            "1",
+            property,
+            user,
+            dateRange,
+            6
+        );
+        await bookingRepository.save(booking);
+
+        booking.cancel(new Date("2024-12-15"));
+        await bookingRepository.save(booking);
+        
+        const updatedBooking = await bookingRepository.findById("1");
+
+        expect(updatedBooking).not.toBeNull();
+        expect(updatedBooking).toBeInstanceOf(Booking);
+        expect(updatedBooking?.getStatus()).toBe("CANCELLED");
+    });
 });
