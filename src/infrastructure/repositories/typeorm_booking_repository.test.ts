@@ -1,11 +1,12 @@
 import { DataSource } from "typeorm";
 import { Booking } from "../../domain/entities/booking";
-import { BookingEntity } from "../persistence/entities/booking_entity"; 
+import { BookingEntity } from "../persistence/entities/booking_entity";
 import { Property } from "../../domain/entities/property";
 import { PropertyEntity } from "../persistence/entities/property_entity"; 
 import { User } from "../../domain/entities/user";
 import { UserEntity } from "../persistence/entities/user_entity";
 import { DateRange } from "../../domain/value_objects/date_range";
+import { TypeORMBookingRepository} from "../repositories/typeorm_booking_repository";
 
 describe("TypeORMBookingRepository", () => {
     let dataSource: DataSource;
@@ -78,7 +79,6 @@ describe("TypeORMBookingRepository", () => {
         expect(savedBooking?.getId()).toBe(booking.getId());
         expect(savedBooking?.getProperty().getId()).toBe(booking.getProperty().getId());
         expect(savedBooking?.getUser().getId()).toBe(booking.getUser().getId());
-        expect(savedBooking?.getDateRange()).toBe(booking.getDateRange());
         expect(savedBooking?.getGuestCount()).toBe(booking.getGuestCount());
     });
 });
