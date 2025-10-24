@@ -1,5 +1,7 @@
 import express from "express";
+import request from "supertest";
 import { DataSource } from "typeorm";
+import { BookingController } from "../web/booking_controller";
 import { TypeORMBookingRepository } from "../repositories/typeorm_booking_repository";
 import { TypeORMPropertyRepository } from "../repositories/typeorm_property_repository";
 import { TypeORMUserRepository } from "../repositories/typeorm_user_repository";
@@ -32,6 +34,8 @@ beforeAll(async () => {
         logging: false,
     });
 
+    await dataSource.initialize();
+
     bookingRepository = new TypeORMBookingRepository(
         dataSource.getRepository(BookingEntity),
     );
@@ -56,9 +60,9 @@ beforeAll(async () => {
         bookingController.createBooking(req, res).catch((err) => next(err));
     });
 
-    app.delete("/bookings/:id", (req, res, next) => {
-        bookingController.cancelBooking(req, res).catch((err) => next(err));
-    });
+    // app.delete("/bookings/:id", (req, res, next) => {
+    //     bookingController.cancelBooking(req, res).catch((err) => next(err));
+    // });
 });
 
 afterAll(async () => {
@@ -86,5 +90,20 @@ describe("BookingController", () => {
         id: "1",
         name: "Usuário de Teste",
        });
+    });
+
+    it("deve criar uma reserva com sucesso", async () => {
+        const response = await request(app).post("/bookings").send({
+            propertyId: "1",
+            guestId: "1",
+            startDate: "2024-12-20",
+            endDate: "2024-12-26",
+            guestCount: 2
+        });
+
+        expect(response.status).toBe(201);
+        expect(response.body.message).toBe("Booking created successfully");
+        expect(response.body.booking).toHaveProperty("id");
+        expect(response.body.booking).toHaveProperty("totalPrice");
     });
 });
