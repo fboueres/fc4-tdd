@@ -106,4 +106,69 @@ describe("BookingController", () => {
         expect(response.body.booking).toHaveProperty("id");
         expect(response.body.booking).toHaveProperty("totalPrice");
     });
+
+    it("deve retornar 400 ao tentar criar uma reserva com data de início inválida", async () => {
+        const response = await request(app).post("/bookings").send({
+            propertyId: "1",
+            guestId: "1",
+            startDate: "invalid-date",
+            endDate: "2024-12-26",
+            guestCount: 2
+        });
+
+        expect(response.status).toBe(400);
+        expect(response.body.message).toBe("Data de início ou fim inválida");
+    });
+
+    it("deve retornar 400 ao tentar criar uma reserva com data de fim inválida", async () => {
+        const response = await request(app).post("/bookings").send({
+            propertyId: "1",
+            guestId: "1",
+            startDate: "2024-12-26",
+            endDate: "invalid-date",
+            guestCount: 2
+        });
+
+        expect(response.status).toBe(400);
+        expect(response.body.message).toBe("Data de início ou fim inválida");
+    });
+
+    it("deve retornar 400 ao tentar criar uma reserva com número de hóspedes inválidos", async () => {
+        const response = await request(app).post("/bookings").send({
+            propertyId: "1",
+            guestId: "1",
+            startDate: "2024-12-20",
+            endDate: "2024-12-25",
+            guestCount: 0
+        });
+
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe("O número de hóspedes deve ser maior que zero.");
+    });
+
+    it("deve retornar 400 ao tentar criar uma reserva com propertyId inválido", async () => {
+        const response = await request(app).post("/bookings").send({
+            propertyId: "invalid-propertyId",
+            guestId: "1",
+            startDate: "2024-12-20",
+            endDate: "2024-12-25",
+            guestCount: 0
+        });
+
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe("Propriedade não encontrada.");
+    });
+    
+    it("deve retornar 400 ao tentar criar uma reserva com guestId inválido", async () => {
+        const response = await request(app).post("/bookings").send({
+            propertyId: "1",
+            guestId: "invalid-guestId",
+            startDate: "2024-12-20",
+            endDate: "2024-12-25",
+            guestCount: 0
+        });
+
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe("Usuário não encontrado.");
+    });
 });

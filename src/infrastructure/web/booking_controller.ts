@@ -15,14 +15,14 @@ export class BookingController {
             const endDate = new Date(req.body.endDate);
 
             if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-                return res.status(400).json({error: "Data de início ou fim inválida"});
+                return res.status(400).json({message: "Data de início ou fim inválida"});
             }
 
             const dto: CreateBookingDTO = {
                 propertyId: req.body.propertyId,
                 guestId: req.body.guestId,
-                startDate: req.body.startDate,
-                endDate: req.body.endDate,
+                startDate: startDate,
+                endDate: endDate,
                 guestCount: req.body.guestCount,
             }
 
@@ -43,8 +43,7 @@ export class BookingController {
             });
         }
         catch(error: any) {
-            console.log(error);
             return res.status(400).json({error: error.message || "Unexpected error"});
-        } 
+        }
     }
 }
