@@ -46,4 +46,17 @@ export class BookingController {
             return res.status(400).json({error: error.message || "Unexpected error"});
         }
     }
+
+    async cancelBooking(req: Request, res: Response): Promise<Response> {
+        try{
+            const bookingId = req.params.id;
+            await this.bookingService.cancelBooking(bookingId);
+
+            return res.status(200).json({ message: "Booking cancelled successfully" });
+        } catch(error: any) {
+            return res
+                .status(400)
+                .json({ message: "Reserva não encontrada" })
+        }
+    }
 }
